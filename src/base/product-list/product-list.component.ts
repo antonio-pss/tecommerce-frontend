@@ -1,23 +1,28 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Product} from '../../shared/models/product';
-import {Observable} from 'rxjs';
 import {URLS} from '../../shared/urls';
 import {MatCard} from '@angular/material/card';
 import {
   MatCell,
   MatCellDef,
   MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable
+  MatRow,
+  MatRowDef,
+  MatTable
 } from '@angular/material/table';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
-import {MatIconButton} from '@angular/material/button';
-import {MatIcon} from '@angular/material/icon';
-import {HttpOptions} from '../../shared/http/http-options';
+import {MatFabButton, MatIconButton} from '@angular/material/button';
+import {MatIcon, MatIconModule} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {BaseService} from '../../shared/service/base.service';
+import {elementAt} from 'rxjs';
+
 
 @Component({
   selector: 'app-product-list',
@@ -37,22 +42,25 @@ import {HttpOptions} from '../../shared/http/http-options';
     MatFormField,
     FormsModule,
     MatIconButton,
-    MatIcon,
     MatLabel,
     MatHeaderCellDef,
+    MatIconModule,
+    MatFabButton,
   ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
 })
-export class ProductListComponent implements OnInit{
+export class ProductListComponent implements OnInit {
   public dataSource: Product[] = [];
-  public displayedColumns: string[] = ['id', 'description', 'quantity'];
+  public displayedColumns: string[] = ['id', 'description', 'quantity', 'actions'];
   public searchValue: string = '';
   public searchQtd: string = '';
 
-  private parameters: HttpParams = new HttpParams();
+  private router: Router = new Router();
+  private service: BaseService<Product>
 
   constructor(private http: HttpClient) {
+    this.service = new BaseService<Product>(http, URLS.PRODUCT)
   }
 
   public ngOnInit(): void {
@@ -60,13 +68,12 @@ export class ProductListComponent implements OnInit{
   }
 
   public search(resetIndex: boolean = false): void {
-    this.clearParameters()
-    this.addParameters('description', this.searchValue)
-    this.addParameters('quantity', this.searchQtd)
-    this.getAll<Product>(URLS.PRODUCT).subscribe({
+    this.service.clearParameter()
+    this.service.addParameter('description', this.searchValue)
+    this.service.addParameter('quantity', this.searchQtd)
+    this.service.getAll().subscribe({
       next: (data: Product[]) => {
         this.dataSource = data;
-
       },
       error: (err) => {
         console.error('Error loading products');
@@ -74,24 +81,14 @@ export class ProductListComponent implements OnInit{
     })
   }
 
-  public getAll<T>(route: string): Observable<T[]> {
-    const url = URLS.BASE + route
-    return this.http.get<T[]>(url, this.getOptions());
-  }
-
-  public clearParameters(): void {
-    this.parameters = new HttpParams();
-  }
-
-  public addParameters(key: string, value: string): void {
-    this.parameters = this.parameters.set(key, value);
-  }
-
-  public getOptions(): HttpOptions {
-    const httpOptions: HttpOptions = {}
-    if (this.parameters) {
-      httpOptions.params = this.parameters;
-    }
-    return httpOptions;
+  public deleteObject(id: number): void {
+    this.service.delete(id).subscribe({
+      next: (data: Product[]) => {
+        this.search();
+      },
+      error: (_) => {
+        console.error('Error deleting products');
+      }
+    })
   }
 }

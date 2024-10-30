@@ -1,22 +1,27 @@
 import {Component, OnInit} from '@angular/core';
-import {Product} from '../../shared/models/product';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {URLS} from '../../shared/urls';
-import {Observable} from 'rxjs';
-import {HttpOptions} from '../../shared/http/http-options';
 import {MatCard} from '@angular/material/card';
 import {
   MatCell,
   MatCellDef,
   MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable
+  MatRow,
+  MatRowDef,
+  MatTable
 } from '@angular/material/table';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
+import {BaseService} from '../../shared/service/base.service';
+import {Sale} from '../../shared/models/sale';
+import {MatFabButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-sale-list',
@@ -37,20 +42,24 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     MatTable,
     ReactiveFormsModule,
     FormsModule,
-    MatHeaderCellDef
+    MatHeaderCellDef,
+    MatFabButton,
+    MatIcon
   ],
   templateUrl: './sale-list.component.html',
   styleUrl: './sale-list.component.css'
 })
-export class SaleListComponent implements OnInit{
-  public dataSource: Product[] = [];
+export class SaleListComponent implements OnInit {
+  public dataSource: Sale[] = [];
   public displayedColumns: string[] = ['id', 'nrf', 'id_client', 'id_employee', 'id_product'];
   public searchNRF: string = '';
   public searchIdClient: string = '';
 
-  private parameters: HttpParams = new HttpParams();
+  private router: Router = new Router();
+  private service: BaseService<Sale>
 
   constructor(private http: HttpClient) {
+    this.service = new BaseService<Sale>(http, URLS.SALE)
   }
 
   public ngOnInit(): void {
@@ -58,11 +67,11 @@ export class SaleListComponent implements OnInit{
   }
 
   public search(resetIndex: boolean = false): void {
-    this.clearParameters()
-    this.addParameters('nrf', this.searchNRF)
-    this.addParameters('id_client', this.searchIdClient)
-    this.getAll<Product>(URLS.SALE).subscribe({
-      next: (data: Product[]) => {
+    this.service.clearParameter()
+    this.service.addParameter('nrf', this.searchNRF)
+    this.service.addParameter('id_client', this.searchIdClient)
+    this.service.getAll().subscribe({
+      next: (data: Sale[]) => {
         this.dataSource = data;
 
       },
@@ -70,27 +79,6 @@ export class SaleListComponent implements OnInit{
         console.error('Error loading products');
       }
     })
-  }
-
-  public getAll<T>(route: string): Observable<T[]> {
-    const url = URLS.BASE + route
-    return this.http.get<T[]>(url, this.getOptions());
-  }
-
-  public clearParameters(): void {
-    this.parameters = new HttpParams();
-  }
-
-  public addParameters(key: string, value: string): void {
-    this.parameters = this.parameters.set(key, value);
-  }
-
-  public getOptions(): HttpOptions {
-    const httpOptions: HttpOptions = {}
-    if (this.parameters) {
-      httpOptions.params = this.parameters;
-    }
-    return httpOptions;
   }
 }
 

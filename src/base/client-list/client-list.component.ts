@@ -4,19 +4,24 @@ import {
   MatCell,
   MatCellDef,
   MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable
+  MatRow,
+  MatRowDef,
+  MatTable
 } from "@angular/material/table";
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {Product} from '../../shared/models/product';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {URLS} from '../../shared/urls';
-import {Observable} from 'rxjs';
-import {HttpOptions} from '../../shared/http/http-options';
+import {MatFabButton} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {BaseService} from '../../shared/service/base.service';
+import {Router} from '@angular/router';
+import {Client} from '../../shared/models/client';
 
 @Component({
   selector: 'app-client-list',
@@ -37,20 +42,24 @@ import {HttpOptions} from '../../shared/http/http-options';
     MatTable,
     ReactiveFormsModule,
     FormsModule,
-    MatHeaderCellDef
+    MatHeaderCellDef,
+    MatFabButton,
+    MatIconModule,
   ],
   templateUrl: './client-list.component.html',
   styleUrl: './client-list.component.css'
 })
-export class ClientListComponent implements OnInit{
-  public dataSource: Product[] = [];
+export class ClientListComponent implements OnInit {
+  public dataSource: Client[] = [];
   public displayedColumns: string[] = ['id', 'name', 'age', 'rg', 'cpf'];
   public searchName: string = '';
   public searchCpfSW: string = '';
 
-  private parameters: HttpParams = new HttpParams();
+  private router: Router = new Router();
+  private service: BaseService<Client>
 
   constructor(private http: HttpClient) {
+    this.service = new BaseService<Client>(http, URLS.CLIENT)
   }
 
   public ngOnInit(): void {
@@ -58,38 +67,16 @@ export class ClientListComponent implements OnInit{
   }
 
   public search(resetIndex: boolean = false): void {
-    this.clearParameters()
-    this.addParameters('name', this.searchName)
-    this.addParameters('cpf_sw', this.searchCpfSW)
-    this.getAll<Product>(URLS.CLIENT).subscribe({
-      next: (data: Product[]) => {
+    this.service.clearParameter()
+    this.service.addParameter('name', this.searchName)
+    this.service.addParameter('cpf_sw', this.searchCpfSW)
+    this.service.getAll().subscribe({
+      next: (data: Client[]) => {
         this.dataSource = data;
-
       },
       error: (err) => {
         console.error('Error loading products');
       }
     })
-  }
-
-  public getAll<T>(route: string): Observable<T[]> {
-    const url = URLS.BASE + route
-    return this.http.get<T[]>(url, this.getOptions());
-  }
-
-  public clearParameters(): void {
-    this.parameters = new HttpParams();
-  }
-
-  public addParameters(key: string, value: string): void {
-    this.parameters = this.parameters.set(key, value);
-  }
-
-  public getOptions(): HttpOptions {
-    const httpOptions: HttpOptions = {}
-    if (this.parameters) {
-      httpOptions.params = this.parameters;
-    }
-    return httpOptions;
   }
 }
