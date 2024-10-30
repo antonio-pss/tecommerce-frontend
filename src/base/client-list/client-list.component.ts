@@ -17,11 +17,12 @@ import {MatInput} from "@angular/material/input";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClient} from '@angular/common/http';
 import {URLS} from '../../shared/urls';
-import {MatFabButton} from '@angular/material/button';
+import {MatFabButton, MatIconButton} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {BaseService} from '../../shared/service/base.service';
-import {Router} from '@angular/router';
+import {NavigationExtras, Router} from '@angular/router';
 import {Client} from '../../shared/models/client';
+import {Product} from '../../shared/models/product';
 
 @Component({
   selector: 'app-client-list',
@@ -45,13 +46,14 @@ import {Client} from '../../shared/models/client';
     MatHeaderCellDef,
     MatFabButton,
     MatIconModule,
+    MatIconButton,
   ],
   templateUrl: './client-list.component.html',
   styleUrl: './client-list.component.css'
 })
 export class ClientListComponent implements OnInit {
   public dataSource: Client[] = [];
-  public displayedColumns: string[] = ['id', 'name', 'age', 'rg', 'cpf'];
+  public displayedColumns: string[] = ['id', 'name', 'age', 'rg', 'cpf', 'actions'];
   public searchName: string = '';
   public searchCpfSW: string = '';
 
@@ -78,5 +80,21 @@ export class ClientListComponent implements OnInit {
         console.error('Error loading products');
       }
     })
+  }
+
+  public deleteObject(id: number): void {
+    this.service.delete(id).subscribe({
+      next: (data: Product[]) => {
+        this.search();
+      },
+      error: (_) => {
+        console.error('Error deleting products');
+      }
+    })
+  }
+
+  public goToPage(route: string): void {
+    const extras: NavigationExtras = {queryParamsHandling: 'merge'};
+    this.router.navigate([route], extras).then();
   }
 }

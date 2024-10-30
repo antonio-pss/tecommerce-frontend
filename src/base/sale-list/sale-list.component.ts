@@ -17,11 +17,12 @@ import {
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
+import {NavigationExtras, Router} from '@angular/router';
 import {BaseService} from '../../shared/service/base.service';
 import {Sale} from '../../shared/models/sale';
-import {MatFabButton} from '@angular/material/button';
+import {MatFabButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
+import {Product} from '../../shared/models/product';
 
 @Component({
   selector: 'app-sale-list',
@@ -44,14 +45,15 @@ import {MatIcon} from '@angular/material/icon';
     FormsModule,
     MatHeaderCellDef,
     MatFabButton,
-    MatIcon
+    MatIcon,
+    MatIconButton
   ],
   templateUrl: './sale-list.component.html',
   styleUrl: './sale-list.component.css'
 })
 export class SaleListComponent implements OnInit {
   public dataSource: Sale[] = [];
-  public displayedColumns: string[] = ['id', 'nrf', 'id_client', 'id_employee', 'id_product'];
+  public displayedColumns: string[] = ['id', 'nrf', 'id_client', 'id_employee', 'id_product', 'actions'];
   public searchNRF: string = '';
   public searchIdClient: string = '';
 
@@ -80,5 +82,22 @@ export class SaleListComponent implements OnInit {
       }
     })
   }
+
+  public deleteObject(id: number): void {
+    this.service.delete(id).subscribe({
+      next: (data: Product[]) => {
+        this.search();
+      },
+      error: (_) => {
+        console.error('Error deleting products');
+      }
+    })
+  }
+
+  public goToPage(route: string): void {
+    const extras: NavigationExtras = {queryParamsHandling: 'merge'};
+    this.router.navigate([route], extras).then();
+  }
+
 }
 

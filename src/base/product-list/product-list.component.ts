@@ -19,7 +19,7 @@ import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {MatFabButton, MatIconButton} from '@angular/material/button';
 import {MatIcon, MatIconModule} from '@angular/material/icon';
-import {Router} from '@angular/router';
+import {NavigationExtras, Router} from '@angular/router';
 import {BaseService} from '../../shared/service/base.service';
 import {elementAt} from 'rxjs';
 
@@ -90,5 +90,10 @@ export class ProductListComponent implements OnInit {
         console.error('Error deleting products');
       }
     })
+  }
+
+  public goToPage(route: string): void {
+    const extras: NavigationExtras = {queryParamsHandling: 'merge'};
+    this.router.navigate([route], extras).then();
   }
 }

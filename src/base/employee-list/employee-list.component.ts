@@ -17,11 +17,12 @@ import {
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatFabButton} from '@angular/material/button';
+import {MatFabButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
-import {Router} from '@angular/router';
+import {NavigationExtras, Router} from '@angular/router';
 import {BaseService} from '../../shared/service/base.service';
 import {Employee} from '../../shared/models/employee';
+import {Product} from '../../shared/models/product';
 
 @Component({
   selector: 'app-employee-list',
@@ -44,14 +45,15 @@ import {Employee} from '../../shared/models/employee';
     FormsModule,
     MatHeaderCellDef,
     MatFabButton,
-    MatIcon
+    MatIcon,
+    MatIconButton
   ],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css'
 })
 export class EmployeeListComponent implements OnInit {
   public dataSource: Employee[] = [];
-  public displayedColumns: string[] = ['id', 'name', 'registration'];
+  public displayedColumns: string[] = ['id', 'name', 'registration', 'actions'];
   public searchName: string = '';
   public searchRegistration: string = '';
 
@@ -79,5 +81,21 @@ export class EmployeeListComponent implements OnInit {
         console.error('Error loading products');
       }
     })
+  }
+
+  public deleteObject(id: number): void {
+    this.service.delete(id).subscribe({
+      next: (data: Product[]) => {
+        this.search();
+      },
+      error: (_) => {
+        console.error('Error deleting products');
+      }
+    })
+  }
+
+  public goToPage(route: string): void {
+    const extras: NavigationExtras = {queryParamsHandling: 'merge'};
+    this.router.navigate([route], extras).then();
   }
 }
