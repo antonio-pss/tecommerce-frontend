@@ -11,9 +11,14 @@
   </mat-form-field>
 </div>
 
-<button mat-fab (click)="search()">
+<button mat-fab class="btn-default" (click)="search()">
   <mat-icon aria-hidden="false" aria-label="Search" fontIcon="search"></mat-icon>
 </button>
+
+<button mat-fab class="btn-default" (click)="goToPage('sale/create')">
+  <mat-icon aria-hidden="false" aria-label="Search" fontIcon="add"></mat-icon>
+</button>
+
 <mat-card>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
@@ -48,7 +53,9 @@
         <button mat-icon-button aria-label="delete" (click)="deleteObject(element.id)">
           <mat-icon>delete</mat-icon>
         </button>
-
+        <button mat-icon-button aria-label="edit" (click)="goToPage('/sale/'+element.id)">
+          <mat-icon>edit</mat-icon>
+        </button>
       </td>
     </ng-container>
 

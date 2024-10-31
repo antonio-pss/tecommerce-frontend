@@ -97,4 +97,6 @@ export class ClientListComponent implements OnInit {
     const extras: NavigationExtras = {queryParamsHandling: 'merge'};
     this.router.navigate([route], extras).then();
   }
+
+
 }

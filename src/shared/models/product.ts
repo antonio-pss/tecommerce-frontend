@@ -1,6 +1,6 @@
 import {ModelBase} from './model-base';
 
-export interface Product extends ModelBase{
+export class Product extends ModelBase{
   description: String;
   quantity: number;
 }
