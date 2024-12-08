@@ -7,6 +7,7 @@ import {ProductItemComponent} from '../base/product-list/product-item/product-it
 import {ClientItemComponent} from '../base/client-list/client-item/client-item.component';
 import {EmployeeItemComponent} from '../base/employee-list/employee-item/employee-item.component';
 import {SaleItemComponent} from '../base/sale-list/sale-item/sale-item.component';
+import { GamePageComponent } from '../base/game-page/game-page.component';
 
 export const routes: Routes = [
   {
@@ -43,7 +44,6 @@ export const routes: Routes = [
   },
   {
     path: 'game',
-    redirectTo: "../base/game-test/index.html",
-    pathMatch: 'full'
+    component: GamePageComponent
   }
 ];
