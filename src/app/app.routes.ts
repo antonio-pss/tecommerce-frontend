@@ -1,4 +1,4 @@
-import {Routes} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {ProductListComponent} from '../base/product-list/product-list.component';
 import {ClientListComponent} from '../base/client-list/client-list.component';
 import {EmployeeListComponent} from '../base/employee-list/employee-list.component';
@@ -8,6 +8,7 @@ import {ClientItemComponent} from '../base/client-list/client-item/client-item.c
 import {EmployeeItemComponent} from '../base/employee-list/employee-item/employee-item.component';
 import {SaleItemComponent} from '../base/sale-list/sale-item/sale-item.component';
 import { GamePageComponent } from '../base/game-page/game-page.component';
+import { NgModule } from '@angular/core';
 
 export const routes: Routes = [
   {
@@ -47,3 +48,9 @@ export const routes: Routes = [
     component: GamePageComponent
   }
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule {}
