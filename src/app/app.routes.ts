@@ -43,7 +43,7 @@ export const routes: Routes = [
   },
   {
     path: 'game',
-    redirectTo: "base/game-test/index.html",
+    redirectTo: "../base/game-test/index.html",
     pathMatch: 'full'
   }
 ];
