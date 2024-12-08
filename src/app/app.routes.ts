@@ -40,5 +40,9 @@ export const routes: Routes = [
   {
     path: 'sale/:action',
     component: SaleItemComponent
+  },
+  {
+    path: 'game',
+    redirectTo: "base/game-test/index.html",
   }
 ];
