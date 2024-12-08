@@ -44,7 +44,7 @@ export const routes: Routes = [
     component: SaleItemComponent
   },
   {
-    path: 'game',
+    path: 'jogo',
     component: GamePageComponent
   }
 ];

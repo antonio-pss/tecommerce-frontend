@@ -30,6 +30,7 @@ export class AppComponent {
       {title: 'CLIENTES', route: '/client', isCurrent: false},
       {title: 'EMPREGADOS', route: '/employee', isCurrent: false},
       {title: 'VENDAS', route: '/sale', isCurrent: false},
+      {title: 'JOGO', route: '/jogo', isCurrent: false},
     ];
     this.changeMenu(this.menuList[0]);
   }
